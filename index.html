@@ -5,32 +5,85 @@
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <title>Happy Farmers 2v2 Tournaments — Ban & Pick</title>
   <style>
-    :root{--navy:#172f4d;--gold:#c79a42;--paper:#f7f0df;--ink:#26231d;--muted:#746c5f;--line:#d7c9ad;--ok:#416747;--disabled:#d8d4ca;--danger:#a53a32;--white:#fff}
-    *{box-sizing:border-box} body{margin:0;font-family:system-ui,-apple-system,"Segoe UI","PingFang SC","Microsoft YaHei",sans-serif;background:#eae4d7;color:var(--ink)}
-    button,select,input{font:inherit} button{cursor:pointer}
+    :root{
+      --navy:#172f4d;--gold:#c79a42;--paper:#f7f0df;--ink:#26231d;--muted:#746c5f;
+      --line:#d7c9ad;--disabled:#d8d4ca;--danger:#a53a32;--white:#fff
+    }
+    *{box-sizing:border-box}
+    body{margin:0;font-family:system-ui,-apple-system,"Segoe UI","PingFang SC","Microsoft YaHei",sans-serif;background:#eae4d7;color:var(--ink)}
+    button,select{font:inherit} button{cursor:pointer}
     .shell{min-height:100vh;display:grid;grid-template-columns:minmax(220px,31vw) 1fr;background:var(--paper)}
-    .poster{position:sticky;top:0;height:100vh;background:#0d1b2b;overflow:hidden}.poster img{width:100%;height:100%;object-fit:cover;display:block;opacity:.94}.poster:after{content:"";position:absolute;inset:0;background:linear-gradient(90deg,transparent 62%,rgba(15,27,42,.3))}
-    .main{padding:30px clamp(18px,4vw,56px) 48px;max-width:1100px;width:100%;margin:0 auto}
-    .brand{display:flex;align-items:center;gap:13px;border-bottom:2px solid var(--gold);padding-bottom:17px;margin-bottom:26px}.brand-mark{width:46px;height:46px;border:2px solid var(--gold);border-radius:50%;display:grid;place-items:center;background:var(--navy);color:var(--gold);font-weight:800}.brand h1{margin:0;font-family:Georgia,serif;color:var(--navy);font-size:clamp(24px,4vw,38px)}.brand p{margin:4px 0 0;color:var(--muted);font-size:14px}
-    .panel{background:rgba(255,255,255,.72);border:1px solid var(--line);border-radius:18px;padding:22px;margin:16px 0}.center{text-align:center}.muted{color:var(--muted)}
-    .match-title{font-family:Georgia,serif;font-size:clamp(27px,4vw,42px);margin:6px 0}.versus{display:grid;grid-template-columns:1fr auto 1fr;align-items:center;gap:16px;margin:26px 0}.team-card{border:1px solid var(--line);background:#fff;border-radius:16px;padding:18px;text-align:center}.team-card.active{outline:3px solid rgba(199,154,66,.34);border-color:var(--gold)}.team-id{font-weight:800;font-size:20px;color:var(--navy)}.progress{margin-top:5px;font-size:14px;color:var(--muted)}
-    .team-choice{display:grid;grid-template-columns:1fr 1fr;gap:14px;margin-top:22px}.big-choice{padding:18px;border:2px solid var(--navy);background:#fff;color:var(--navy);border-radius:14px;font-weight:800}.big-choice:hover{background:#eef2f6}
-    .turn{display:inline-flex;align-items:center;gap:7px;background:#fff7df;border:1px solid #e2c778;border-radius:999px;padding:7px 12px;font-size:13px;font-weight:700;color:#725315}.dot{width:8px;height:8px;background:var(--gold);border-radius:50%}
-    label{display:block;font-weight:750;margin-bottom:7px}.select-row{display:grid;grid-template-columns:1fr auto;gap:12px;align-items:end}.field select{width:100%;border:1px solid var(--line);border-radius:12px;background:#fff;padding:12px}.confirm{border:none;border-radius:12px;padding:12px 20px;background:var(--navy);color:#fff;font-weight:800;min-width:125px}.confirm:disabled{background:var(--disabled);color:#888;cursor:not-allowed}
-    .history{margin-top:20px}.history-list{display:grid;gap:8px}.history-row{display:grid;grid-template-columns:38px 1fr auto;gap:12px;align-items:center;background:#fff;border:1px solid #e1d7c5;border-radius:10px;padding:9px 12px}.seq{font-variant-numeric:tabular-nums;color:var(--muted)}.team-tag{font-size:12px;font-weight:800;background:#edf1f6;border-radius:999px;padding:4px 8px;color:var(--navy)}
-    .pools{display:grid;grid-template-columns:1fr 1fr;gap:18px}.pool{background:#fff;border:1px solid var(--line);border-radius:16px;padding:16px}.leader-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:9px;margin-top:13px}.leader-btn{min-height:52px;border:1px solid var(--line);border-radius:11px;background:#fff;padding:9px;text-align:left}.leader-btn:hover:not(:disabled){border-color:var(--gold);background:#fffaf0}.leader-btn.selected{border:2px solid var(--gold);background:#fff5d9}.leader-btn.picked,.leader-btn:disabled{background:#ece9e2;color:#969087;cursor:not-allowed}
-    .result-grid{display:grid;grid-template-columns:1fr 1fr;gap:18px}.result-box{background:#fff;border:1px solid var(--line);border-radius:15px;padding:16px}.result-box h3{margin:0 0 10px;color:var(--navy)}.mini-list{margin:0;padding-left:22px}.seat-board{display:grid;gap:9px;margin-top:15px}.seat{display:grid;grid-template-columns:70px 1fr;align-items:center;background:var(--navy);color:#fff;border-radius:12px;padding:12px}.seat strong{color:#f2c968}
-    .close{display:block;margin:24px auto 0;border:none;border-radius:12px;padding:13px 28px;background:var(--navy);color:#fff;font-weight:800}.status{min-height:22px;color:var(--muted);font-size:13px;margin-top:12px}.error{color:var(--danger);font-weight:700}.hidden{display:none!important}
-    @media(max-width:820px){.shell{grid-template-columns:1fr}.poster{position:relative;height:220px}.poster img{object-position:center 28%}.main{padding-top:22px}.pools,.result-grid{grid-template-columns:1fr}.versus{grid-template-columns:1fr}.versus .vs{display:none}.leader-grid{grid-template-columns:1fr}.team-choice{grid-template-columns:1fr}}
+    .poster{position:sticky;top:0;height:100vh;background:#0d1b2b;overflow:hidden}
+    .poster img{width:100%;height:100%;object-fit:cover;display:block;opacity:.95}
+    .main{padding:30px clamp(18px,4vw,56px) 48px;max-width:1120px;width:100%;margin:0 auto}
+    .brand{display:flex;align-items:center;gap:13px;border-bottom:2px solid var(--gold);padding-bottom:17px;margin-bottom:26px}
+    .brand-mark{width:46px;height:46px;border:2px solid var(--gold);border-radius:50%;display:grid;place-items:center;background:var(--navy);color:var(--gold);font-weight:800}
+    .brand h1{margin:0;font-family:Georgia,serif;color:var(--navy);font-size:clamp(24px,4vw,38px)}
+    .brand p{margin:4px 0 0;color:var(--muted);font-size:14px}
+    .panel{background:rgba(255,255,255,.76);border:1px solid var(--line);border-radius:18px;padding:22px;margin:16px 0}
+    .center{text-align:center}.muted{color:var(--muted)}.error{color:var(--danger);font-weight:700}.hidden{display:none!important}
+    .match-title{font-family:Georgia,serif;font-size:clamp(27px,4vw,42px);margin:6px 0}
+    .team-choice{display:grid;grid-template-columns:1fr 1fr;gap:14px;margin-top:22px}
+    .big-choice{padding:18px;border:2px solid var(--navy);background:#fff;color:var(--navy);border-radius:14px;font-weight:800;font-size:18px}
+    .big-choice:hover{background:#eef2f6}
+    .versus{display:grid;grid-template-columns:1fr auto 1fr;align-items:center;gap:16px;margin:24px 0}
+    .team-card{border:1px solid var(--line);background:#fff;border-radius:16px;padding:18px;text-align:center}
+    .team-card.active{outline:3px solid rgba(199,154,66,.34);border-color:var(--gold)}
+    .team-name{font-weight:800;font-size:20px;color:var(--navy)}
+    .progress{margin-top:5px;font-size:14px;color:var(--muted)}
+    .turn{display:inline-flex;align-items:center;gap:7px;background:#fff7df;border:1px solid #e2c778;border-radius:999px;padding:7px 12px;font-size:13px;font-weight:700;color:#725315}
+    .dot{width:8px;height:8px;background:var(--gold);border-radius:50%}
+    label{display:block;font-weight:750;margin-bottom:7px}
+    .select-row{display:grid;grid-template-columns:1fr auto;gap:12px;align-items:end}
+    .field select{width:100%;border:1px solid var(--line);border-radius:12px;background:#fff;padding:12px}
+    .confirm{border:none;border-radius:12px;padding:12px 20px;background:var(--navy);color:#fff;font-weight:800;min-width:125px}
+    .confirm:disabled{background:var(--disabled);color:#888;cursor:not-allowed}
+    .status{min-height:22px;color:var(--muted);font-size:13px;margin-top:12px}
+    .history{margin-top:20px}.history-list{display:grid;gap:8px}
+    .history-row{display:grid;grid-template-columns:38px 1fr auto;gap:12px;align-items:center;background:#fff;border:1px solid #e1d7c5;border-radius:10px;padding:9px 12px}
+    .seq{font-variant-numeric:tabular-nums;color:var(--muted)}.team-tag{font-size:12px;font-weight:800;background:#edf1f6;border-radius:999px;padding:4px 8px;color:var(--navy)}
+    .leader-main{font-weight:700}.leader-zh{display:block;color:var(--muted);font-size:12px;margin-top:2px}
+    .pools{display:grid;grid-template-columns:1fr 1fr;gap:18px}
+    .pool{background:#fff;border:1px solid var(--line);border-radius:16px;padding:16px}
+    .leader-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:9px;margin-top:13px}
+    .leader-btn{min-height:68px;border:1px solid var(--line);border-radius:11px;background:#fff;padding:9px;text-align:left}
+    .leader-btn:hover:not(:disabled){border-color:var(--gold);background:#fffaf0}
+    .leader-btn.selected{border:2px solid var(--gold);background:#fff5d9}
+    .leader-btn.picked,.leader-btn:disabled{background:#ece9e2;color:#969087;cursor:not-allowed}
+    .result-grid{display:grid;grid-template-columns:1fr 1fr;gap:18px}
+    .result-box{background:#fff;border:1px solid var(--line);border-radius:15px;padding:16px}
+    .result-box h3{margin:0 0 10px;color:var(--navy)}
+    .mini-list{margin:0;padding-left:22px}.mini-list li{margin:7px 0}
+    .seat-board{display:grid;gap:9px;margin-top:15px}
+    .seat{display:grid;grid-template-columns:70px 1fr;align-items:center;background:var(--navy);color:#fff;border-radius:12px;padding:12px}
+    .seat strong{color:#f2c968}
+    .close{display:block;margin:24px auto 0;border:none;border-radius:12px;padding:13px 28px;background:var(--navy);color:#fff;font-weight:800}
+    .locked-icon{font-size:42px;margin-bottom:8px}
+    @media(max-width:820px){
+      .shell{grid-template-columns:1fr}.poster{position:relative;height:220px}.poster img{object-position:center 28%}.main{padding-top:22px}
+      .pools,.result-grid{grid-template-columns:1fr}.versus{grid-template-columns:1fr}.versus .vs{display:none}.leader-grid{grid-template-columns:1fr}.team-choice{grid-template-columns:1fr}
+    }
   </style>
 </head>
 <body>
 <div class="shell">
   <aside class="poster"><img id="posterImage" src="assets/poster1.png" alt="Happy Farmers 2v2 tournament poster"></aside>
   <main class="main">
-    <header class="brand"><div class="brand-mark">VI</div><div><h1>Happy Farmers 2v2 Tournaments</h1><p>BBG Ban & Pick Room</p></div></header>
+    <header class="brand">
+      <div class="brand-mark">VI</div>
+      <div><h1>Happy Farmers 2v2 Tournaments</h1><p>BBG Ban & Pick Room</p></div>
+    </header>
 
-    <section id="loading" class="panel center"><h2>Loading Match…</h2><p class="muted">Reading the current match state.</p></section>
+    <section id="loading" class="panel center"><h2>Loading Match…</h2><p class="muted">Reading current match state.</p></section>
+
+    <section id="lockedPage" class="hidden">
+      <div class="panel center">
+        <div class="locked-icon">🔒</div>
+        <h2 class="match-title">Ban & Pick Locked</h2>
+        <p id="lockedMatch" class="muted"></p>
+        <p>This Ban & Pick has already been completed. This room cannot be opened again unless tournament staff reopens it.</p>
+      </div>
+    </section>
 
     <section id="entry" class="hidden">
       <div class="panel center">
@@ -46,15 +99,22 @@
     </section>
 
     <section id="banPage" class="hidden">
-      <div class="panel center"><span class="turn"><span class="dot"></span><span id="banTurnText"></span></span><h2 class="match-title">Ban Stage</h2><p class="muted">Alternating bans · 6 per team · confirmed bans cannot be changed.</p></div>
+      <div class="panel center">
+        <span class="turn"><span class="dot"></span><span id="banTurnText"></span></span>
+        <h2 class="match-title">Ban Stage</h2>
+        <p class="muted">Alternating bans · 6 per team · confirmed bans cannot be changed.</p>
+      </div>
       <div class="versus">
-        <div class="team-card" id="banTeamA"><div class="team-id" id="banAName"></div><div class="progress" id="banAProgress"></div></div>
+        <div class="team-card" id="banTeamA"><div class="team-name" id="banAName"></div><div class="progress" id="banAProgress"></div></div>
         <div class="vs">VS</div>
-        <div class="team-card" id="banTeamB"><div class="team-id" id="banBName"></div><div class="progress" id="banBProgress"></div></div>
+        <div class="team-card" id="banTeamB"><div class="team-name" id="banBName"></div><div class="progress" id="banBProgress"></div></div>
       </div>
       <div class="panel">
         <div class="select-row">
-          <div class="field"><label for="banLeader">Leader</label><select id="banLeader"><option value="">Choose a leader…</option></select></div>
+          <div class="field">
+            <label for="banLeader">Leader / 领袖</label>
+            <select id="banLeader"><option value="">Choose a leader…</option></select>
+          </div>
           <button class="confirm" id="confirmBan" disabled>Confirm Ban</button>
         </div>
         <div class="status" id="banStatus"></div>
@@ -63,103 +123,327 @@
     </section>
 
     <section id="pickPage" class="hidden">
-      <div class="panel center"><span class="turn"><span class="dot"></span><span id="pickTurnText"></span></span><h2 class="match-title">Pick Stage</h2><p class="muted">A1 → B1 → A2 → B2 · each team has a different 10-leader pool.</p></div>
-      <div class="pools">
-        <div class="pool"><div class="team-id" id="poolAName"></div><div class="progress" id="pickAProgress"></div><div class="leader-grid" id="poolA"></div></div>
-        <div class="pool"><div class="team-id" id="poolBName"></div><div class="progress" id="pickBProgress"></div><div class="leader-grid" id="poolB"></div></div>
+      <div class="panel center">
+        <span class="turn"><span class="dot"></span><span id="pickTurnText"></span></span>
+        <h2 class="match-title">Pick Stage</h2>
+        <p class="muted">A1 → B1 → A2 → B2 · each team has a different 10-leader pool.</p>
       </div>
-      <div class="panel center"><button class="confirm" id="confirmPick" disabled>Confirm Pick</button><div class="status" id="pickStatus"></div><div class="history"><h3>Pick History</h3><div class="history-list" id="pickHistory"></div></div></div>
+      <div class="pools">
+        <div class="pool"><div class="team-name" id="poolAName"></div><div class="progress" id="pickAProgress"></div><div class="leader-grid" id="poolA"></div></div>
+        <div class="pool"><div class="team-name" id="poolBName"></div><div class="progress" id="pickBProgress"></div><div class="leader-grid" id="poolB"></div></div>
+      </div>
+      <div class="panel center">
+        <button class="confirm" id="confirmPick" disabled>Confirm Pick</button>
+        <div class="status" id="pickStatus"></div>
+        <div class="history"><h3>Pick History</h3><div class="history-list" id="pickHistory"></div></div>
+      </div>
     </section>
 
     <section id="resultPage" class="hidden">
-      <div class="panel center"><h2 class="match-title">Final Result</h2><p class="muted" id="resultMatch"></p></div>
+      <div class="panel center"><h2 class="match-title">Final Ban & Pick Result</h2><p class="muted" id="resultMatch"></p></div>
       <div class="result-grid">
         <div class="result-box"><h3 id="resultATitle"></h3><strong>Bans</strong><ol class="mini-list" id="resultABans"></ol><br><strong>Picks</strong><ol class="mini-list" id="resultAPicks"></ol></div>
         <div class="result-box"><h3 id="resultBTitle"></h3><strong>Bans</strong><ol class="mini-list" id="resultBBans"></ol><br><strong>Picks</strong><ol class="mini-list" id="resultBPicks"></ol></div>
       </div>
-      <div class="panel"><h3>Random Seat Order <span class="muted" id="seatPattern"></span></h3><div class="seat-board" id="seatBoard"></div><button class="close" id="closeWeb">Close Web</button><div class="status center" id="closeStatus"></div></div>
+      <div class="panel">
+        <h3>Random Floor Order <span class="muted" id="seatPattern"></span></h3>
+        <div class="seat-board" id="seatBoard"></div>
+        <button class="close" id="closeWeb">Close Web</button>
+        <div class="status center" id="closeStatus"></div>
+      </div>
     </section>
   </main>
 </div>
+
 <script>
-  const API_URL = "https://script.google.com/macros/s/AKfycbw8Y_8CJlWONBvLHVx1wQvHo_sDotqkTbyxrHUdJb4LoOfE-9MrIMqBfL8nGaBi3_uI/exec";
+  const API_URL = "https://script.google.com/macros/s/AKfycbwWyPF6j9cbWmQTNjIo2ZQp471le5frDWEKyTsaYGxz2S0jTTpwgbQ-y8HIVH5VBosz/exec";
   const params = new URLSearchParams(location.search);
   const MATCH_ID = params.get("match") || "";
+
   let selectedTeam = "";
   let state = null;
   let selectedPick = "";
   let polling = null;
   let requestBusy = false;
+  let completedInThisSession = false;
 
   const $ = id => document.getElementById(id);
-  const pages = ["loading","entry","banPage","pickPage","resultPage"];
-  function showPage(id){pages.forEach(x=>$(x).classList.toggle("hidden",x!==id));$("posterImage").src=(id==="entry"||id==="resultPage")?"assets/poster1.png":"assets/poster2.png";}
-  function apiReady(){return API_URL.startsWith("https://script.google.com/") && !API_URL.includes("PASTE_YOUR_");}
-  function setStatus(id,msg,error=false){$(id).textContent=msg||"";$(id).className="status"+(error?" error":"");}
+  const pages = ["loading","lockedPage","entry","banPage","pickPage","resultPage"];
+
+  function showPage(id){
+    pages.forEach(x => $(x).classList.toggle("hidden", x !== id));
+    $("posterImage").src = (id === "entry" || id === "lockedPage" || id === "resultPage")
+      ? "assets/poster1.png"
+      : "assets/poster2.png";
+  }
+
+  function apiReady(){
+    return API_URL.startsWith("https://script.google.com/") && !API_URL.includes("PASTE_YOUR_");
+  }
+
+  function setStatus(id,msg,error=false){
+    $(id).textContent = msg || "";
+    $(id).className = "status" + (error ? " error" : "");
+  }
+
+  function leaderText(leader){
+    if(!leader) return "";
+    return leader.name_zh ? `${leader.name_en} / ${leader.name_zh}` : leader.name_en;
+  }
+
+  function leaderHtml(leader){
+    if(!leader) return "";
+    return `<span class="leader-main">${escapeHtml(leader.name_en)}</span>` +
+      (leader.name_zh ? `<span class="leader-zh">${escapeHtml(leader.name_zh)}</span>` : "");
+  }
 
   async function loadState(){
-    if(!MATCH_ID){showPage("loading");$("loading").innerHTML='<h2>Missing match link</h2><p class="error">This URL needs ?match=round01_01</p>';return;}
-    if(!apiReady()){showPage("loading");$("loading").innerHTML='<h2>Backend not connected</h2><p class="error">Add the Apps Script /exec URL to index.html first.</p>';return;}
+    if(!MATCH_ID){
+      showPage("loading");
+      $("loading").innerHTML = '<h2>Missing match link</h2><p class="error">This URL needs ?match=round01_01</p>';
+      return;
+    }
+    if(!apiReady()){
+      showPage("loading");
+      $("loading").innerHTML = '<h2>Backend not connected</h2><p class="error">Add the Apps Script /exec URL to index.html first.</p>';
+      return;
+    }
+
     try{
-      const u=new URL(API_URL);u.searchParams.set("action","state");u.searchParams.set("match",MATCH_ID);u.searchParams.set("_",Date.now());
-      const res=await fetch(u,{cache:"no-store",redirect:"follow"});const data=await res.json();
-      if(data.status!=="success")throw new Error(data.message||"Could not load match.");
-      state=data;render();
-    }catch(err){if(!state){showPage("loading");$("loading").innerHTML=`<h2>Could not load match</h2><p class="error">${escapeHtml(err.message)}</p>`;}}
+      const u = new URL(API_URL);
+      u.searchParams.set("action","state");
+      u.searchParams.set("match",MATCH_ID);
+      u.searchParams.set("_",Date.now());
+      const res = await fetch(u,{cache:"no-store",redirect:"follow"});
+      const data = await res.json();
+      if(data.status !== "success") throw new Error(data.message || "Could not load match.");
+      state = data;
+      render();
+    }catch(err){
+      if(!state){
+        showPage("loading");
+        $("loading").innerHTML = `<h2>Could not load match</h2><p class="error">${escapeHtml(err.message)}</p>`;
+      }
+    }
   }
 
   function render(){
-    const m=state.match;
-    if(!selectedTeam){
-      showPage("entry");$("entryRound").textContent=m.round;$("entryMatchId").textContent=m.match_id;$("chooseA").textContent=m.team_a;$("chooseB").textContent=m.team_b;return;
+    const m = state.match;
+
+    if(state.locked && !completedInThisSession){
+      stopPolling();
+      showPage("lockedPage");
+      $("lockedMatch").textContent = `${m.match_id} · ${m.team_a_name} vs ${m.team_b_name}`;
+      return;
     }
-    if(![m.team_a,m.team_b].includes(selectedTeam)){selectedTeam="";render();return;}
-    if(m.phase==="BAN")renderBan();else if(m.phase==="PICK")renderPick();else renderResult();
+
+    if(!selectedTeam){
+      showPage("entry");
+      $("entryRound").textContent = m.round;
+      $("entryMatchId").textContent = m.match_id;
+      $("chooseA").textContent = m.team_a_name;
+      $("chooseB").textContent = m.team_b_name;
+      return;
+    }
+
+    if(![m.team_a,m.team_b].includes(selectedTeam)){
+      selectedTeam = "";
+      render();
+      return;
+    }
+
+    if(m.phase === "BAN") renderBan();
+    else if(m.phase === "PICK") renderPick();
+    else renderFinal();
   }
 
   function renderBan(){
-    showPage("banPage");const m=state.match;const myTurn=m.turn_team===selectedTeam;
-    $("banTurnText").textContent=`Current turn: ${m.turn_team}`;$("banAName").textContent=m.team_a;$("banBName").textContent=m.team_b;$("banAProgress").textContent=`${m.team_a_ban_count}/6`;$("banBProgress").textContent=`${m.team_b_ban_count}/6`;
-    $("banTeamA").classList.toggle("active",m.turn_team===m.team_a);$("banTeamB").classList.toggle("active",m.turn_team===m.team_b);
-    const banned=new Set(state.bans.map(x=>x.leader));const select=$("banLeader");const old=select.value;select.innerHTML='<option value="">Choose a leader…</option>';
-    state.leaders.filter(x=>!banned.has(x)).forEach(name=>{const o=document.createElement("option");o.value=name;o.textContent=name;select.appendChild(o)});if([...select.options].some(o=>o.value===old))select.value=old;
-    select.disabled=!myTurn||requestBusy;$("confirmBan").disabled=!myTurn||requestBusy||!select.value;
-    renderHistory("banHistory",state.bans);setStatus("banStatus",myTurn?"Your team may choose the next ban.":`Waiting for ${m.turn_team}…`);
+    showPage("banPage");
+    const m = state.match;
+    const myTurn = m.turn_team === selectedTeam;
+
+    $("banTurnText").textContent = `Current turn: ${m.turn_team_name}`;
+    $("banAName").textContent = m.team_a_name;
+    $("banBName").textContent = m.team_b_name;
+    $("banAProgress").textContent = `${m.team_a_ban_count}/6`;
+    $("banBProgress").textContent = `${m.team_b_ban_count}/6`;
+    $("banTeamA").classList.toggle("active",m.turn_team === m.team_a);
+    $("banTeamB").classList.toggle("active",m.turn_team === m.team_b);
+
+    const banned = new Set(state.bans.map(x => x.leader_id));
+    const select = $("banLeader");
+    const old = select.value;
+    select.innerHTML = '<option value="">Choose a leader…</option>';
+
+    state.leaders
+      .filter(x => !banned.has(x.leader_id))
+      .forEach(leader => {
+        const o = document.createElement("option");
+        o.value = leader.leader_id;
+        o.textContent = leaderText(leader);
+        select.appendChild(o);
+      });
+
+    if([...select.options].some(o => o.value === old)) select.value = old;
+
+    select.disabled = !myTurn || requestBusy;
+    $("confirmBan").disabled = !myTurn || requestBusy || !select.value;
+    renderHistory("banHistory",state.bans);
+    setStatus("banStatus", myTurn ? "Your team may choose the next ban." : `Waiting for ${m.turn_team_name}…`);
   }
 
   function renderPick(){
-    showPage("pickPage");const m=state.match;$("pickTurnText").textContent=`Current turn: ${m.turn_team}`;$("poolAName").textContent=m.team_a;$("poolBName").textContent=m.team_b;$("pickAProgress").textContent=`${m.team_a_pick_count}/2`;$("pickBProgress").textContent=`${m.team_b_pick_count}/2`;
-    renderPool("poolA",m.team_a,m.team_a_pool,m.team_a_picks);renderPool("poolB",m.team_b,m.team_b_pool,m.team_b_picks);renderHistory("pickHistory",state.picks);
-    const canConfirm=m.turn_team===selectedTeam&&selectedPick&&!requestBusy;$("confirmPick").disabled=!canConfirm;setStatus("pickStatus",m.turn_team===selectedTeam?"Select one leader from your pool, then confirm.":`Waiting for ${m.turn_team}…`);
+    showPage("pickPage");
+    const m = state.match;
+
+    $("pickTurnText").textContent = `Current turn: ${m.turn_team_name}`;
+    $("poolAName").textContent = m.team_a_name;
+    $("poolBName").textContent = m.team_b_name;
+    $("pickAProgress").textContent = `${m.team_a_pick_count}/2`;
+    $("pickBProgress").textContent = `${m.team_b_pick_count}/2`;
+
+    renderPool("poolA",m.team_a,m.team_a_pool_ids);
+    renderPool("poolB",m.team_b,m.team_b_pool_ids);
+    renderHistory("pickHistory",state.picks);
+
+    const canConfirm = m.turn_team === selectedTeam && selectedPick && !requestBusy;
+    $("confirmPick").disabled = !canConfirm;
+    setStatus("pickStatus",m.turn_team === selectedTeam ? "Select one leader from your pool, then confirm." : `Waiting for ${m.turn_team_name}…`);
   }
 
-  function renderPool(id,team,pool,picks){
-    const el=$(id);el.innerHTML="";const allPicked=new Set(state.picks.map(x=>x.leader));
-    pool.forEach(name=>{const b=document.createElement("button");b.className="leader-btn";b.textContent=name;const picked=allPicked.has(name);if(picked)b.classList.add("picked");if(selectedPick===name)b.classList.add("selected");b.disabled=picked||state.match.turn_team!==team||selectedTeam!==team||requestBusy;b.addEventListener("click",()=>{selectedPick=name;renderPick()});el.appendChild(b)});
+  function renderPool(id,team,poolIds){
+    const el = $(id);
+    el.innerHTML = "";
+    const allPicked = new Set(state.picks.map(x => x.leader_id));
+
+    poolIds.forEach(leaderId => {
+      const leader = state.leader_lookup[leaderId];
+      const b = document.createElement("button");
+      b.className = "leader-btn";
+      b.innerHTML = leaderHtml(leader);
+
+      const picked = allPicked.has(leaderId);
+      if(picked) b.classList.add("picked");
+      if(selectedPick === leaderId) b.classList.add("selected");
+
+      b.disabled = picked || state.match.turn_team !== team || selectedTeam !== team || requestBusy;
+      b.addEventListener("click",() => {
+        selectedPick = leaderId;
+        renderPick();
+      });
+      el.appendChild(b);
+    });
   }
 
-  function renderResult(){
-    showPage("resultPage");const m=state.match;$("resultMatch").textContent=`${m.match_id} · ${m.team_a} vs ${m.team_b}`;$("resultATitle").textContent=m.team_a;$("resultBTitle").textContent=m.team_b;
-    fillList("resultABans",state.bans.filter(x=>x.team_id===m.team_a).map(x=>x.leader));fillList("resultBBans",state.bans.filter(x=>x.team_id===m.team_b).map(x=>x.leader));fillList("resultAPicks",m.team_a_picks);fillList("resultBPicks",m.team_b_picks);$("seatPattern").textContent=m.seat_pattern?`(${m.seat_pattern})`:"";
-    const seatBoard=$("seatBoard");seatBoard.innerHTML="";m.seats.forEach((leader,i)=>{const div=document.createElement("div");div.className="seat";div.innerHTML=`<strong>Floor ${i+1}</strong><span>${escapeHtml(leader)}</span>`;seatBoard.appendChild(div)});
+  function renderFinal(){
+    completedInThisSession = true;
+    stopPolling();
+    showPage("resultPage");
+
+    const m = state.match;
+    $("resultMatch").textContent = `${m.match_id} · ${m.team_a_name} vs ${m.team_b_name}`;
+    $("resultATitle").textContent = m.team_a_name;
+    $("resultBTitle").textContent = m.team_b_name;
+
+    fillLeaderList("resultABans",state.bans.filter(x => x.team_id === m.team_a).map(x => x.leader));
+    fillLeaderList("resultBBans",state.bans.filter(x => x.team_id === m.team_b).map(x => x.leader));
+    fillLeaderList("resultAPicks",m.team_a_pick_ids.map(id => state.leader_lookup[id]));
+    fillLeaderList("resultBPicks",m.team_b_pick_ids.map(id => state.leader_lookup[id]));
+
+    $("seatPattern").textContent = m.seat_pattern ? `(${m.seat_pattern})` : "";
+    const seatBoard = $("seatBoard");
+    seatBoard.innerHTML = "";
+
+    m.seat_ids.forEach((id,i) => {
+      const leader = state.leader_lookup[id];
+      const div = document.createElement("div");
+      div.className = "seat";
+      div.innerHTML = `<strong>Floor ${i+1}</strong><span>${leaderHtml(leader)}</span>`;
+      seatBoard.appendChild(div);
+    });
   }
 
-  function renderHistory(id,items){const el=$(id);el.innerHTML="";items.forEach((x,i)=>{const row=document.createElement("div");row.className="history-row";row.innerHTML=`<span class="seq">${String(i+1).padStart(2,"0")}</span><span>${escapeHtml(x.leader)}</span><span class="team-tag">${escapeHtml(x.team_id)}</span>`;el.appendChild(row)});if(!items.length)el.innerHTML='<div class="muted">No confirmed actions yet.</div>'}
-  function fillList(id,items){const el=$(id);el.innerHTML="";items.forEach(x=>{const li=document.createElement("li");li.textContent=x;el.appendChild(li)})}
-  function escapeHtml(s){return String(s).replace(/[&<>"]/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c]))}
-
-  async function postAction(action,leader,statusId){
-    if(requestBusy)return;requestBusy=true;setStatus(statusId,"Saving…");render();
-    try{const res=await fetch(API_URL,{method:"POST",redirect:"follow",headers:{"Content-Type":"text/plain;charset=utf-8"},body:JSON.stringify({action,match:MATCH_ID,team:selectedTeam,leader})});const data=await res.json();if(data.status!=="success")throw new Error(data.message||"Action failed.");state=data;selectedPick="";render();}
-    catch(err){setStatus(statusId,err.message,true)}finally{requestBusy=false;render()}
+  function renderHistory(id,items){
+    const el = $(id);
+    el.innerHTML = "";
+    items.forEach((x,i) => {
+      const row = document.createElement("div");
+      row.className = "history-row";
+      row.innerHTML = `<span class="seq">${String(i+1).padStart(2,"0")}</span>` +
+        `<span>${leaderHtml(x.leader)}</span>` +
+        `<span class="team-tag">${escapeHtml(x.team_name)}</span>`;
+      el.appendChild(row);
+    });
+    if(!items.length) el.innerHTML = '<div class="muted">No confirmed actions yet.</div>';
   }
 
-  $("chooseA").addEventListener("click",()=>{selectedTeam=state.match.team_a;render()});$("chooseB").addEventListener("click",()=>{selectedTeam=state.match.team_b;render()});
-  $("banLeader").addEventListener("change",()=>renderBan());$("confirmBan").addEventListener("click",()=>{const leader=$("banLeader").value;if(leader)postAction("confirmBan",leader,"banStatus")});
-  $("confirmPick").addEventListener("click",()=>{if(selectedPick)postAction("confirmPick",selectedPick,"pickStatus")});
-  $("closeWeb").addEventListener("click",()=>{window.close();setTimeout(()=>setStatus("closeStatus","You can close this tab now."),150)});
+  function fillLeaderList(id,leaders){
+    const el = $(id);
+    el.innerHTML = "";
+    leaders.forEach(leader => {
+      const li = document.createElement("li");
+      li.innerHTML = leaderHtml(leader);
+      el.appendChild(li);
+    });
+  }
 
-  loadState();polling=setInterval(loadState,1800);
+  function escapeHtml(s){
+    return String(s ?? "").replace(/[&<>"]/g,c => ({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c]));
+  }
+
+  async function postAction(action,leaderId,statusId){
+    if(requestBusy) return;
+
+    requestBusy = true;
+    setStatus(statusId,"Saving…");
+    render();
+
+    try{
+      const res = await fetch(API_URL,{
+        method:"POST",
+        redirect:"follow",
+        headers:{"Content-Type":"text/plain;charset=utf-8"},
+        body:JSON.stringify({action,match:MATCH_ID,team:selectedTeam,leaderId})
+      });
+      const data = await res.json();
+      if(data.status !== "success") throw new Error(data.message || "Action failed.");
+
+      state = data;
+      selectedPick = "";
+      if(data.just_completed) completedInThisSession = true;
+      render();
+    }catch(err){
+      setStatus(statusId,err.message,true);
+    }finally{
+      requestBusy = false;
+      if(!completedInThisSession) render();
+    }
+  }
+
+  function stopPolling(){
+    if(polling){
+      clearInterval(polling);
+      polling = null;
+    }
+  }
+
+  $("chooseA").addEventListener("click",() => {selectedTeam = state.match.team_a; render();});
+  $("chooseB").addEventListener("click",() => {selectedTeam = state.match.team_b; render();});
+  $("banLeader").addEventListener("change",() => renderBan());
+  $("confirmBan").addEventListener("click",() => {
+    const leaderId = $("banLeader").value;
+    if(leaderId) postAction("confirmBan",leaderId,"banStatus");
+  });
+  $("confirmPick").addEventListener("click",() => {
+    if(selectedPick) postAction("confirmPick",selectedPick,"pickStatus");
+  });
+  $("closeWeb").addEventListener("click",() => {
+    window.close();
+    setTimeout(() => setStatus("closeStatus","You can close this tab now."),150);
+  });
+
+  loadState();
+  polling = setInterval(loadState,1800);
 </script>
 </body>
 </html>
