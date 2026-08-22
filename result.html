@@ -1,0 +1,325 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Happy Farmers 2v2 Tournaments — Result Report</title>
+  <style>
+    :root{
+      --navy:#172f4d;--gold:#c79a42;--paper:#f7f0df;--ink:#26231d;--muted:#746c5f;
+      --line:#d7c9ad;--danger:#a53a32;--white:#fff;--selected:#fff3cc
+    }
+    *{box-sizing:border-box}
+    body{margin:0;font-family:system-ui,-apple-system,"Segoe UI","PingFang SC","Microsoft YaHei",sans-serif;background:#eae4d7;color:var(--ink)}
+    button,input,select,textarea{font:inherit}
+    button{cursor:pointer}
+    .shell{min-height:100vh;display:grid;grid-template-columns:minmax(220px,31vw) 1fr;background:var(--paper)}
+    .poster{position:sticky;top:0;height:100vh;background:#0d1b2b;overflow:hidden}
+    .poster img{width:100%;height:100%;object-fit:cover;display:block;opacity:.95}
+    .main{padding:30px clamp(18px,4vw,56px) 48px;max-width:1050px;width:100%;margin:0 auto}
+    .brand{display:flex;align-items:center;gap:13px;border-bottom:2px solid var(--gold);padding-bottom:17px;margin-bottom:26px}
+    .brand-mark{width:46px;height:46px;border:2px solid var(--gold);border-radius:50%;display:grid;place-items:center;background:var(--navy);color:var(--gold);font-weight:800}
+    .brand h1{margin:0;font-family:Georgia,serif;color:var(--navy);font-size:clamp(24px,4vw,38px)}
+    .brand p{margin:4px 0 0;color:var(--muted);font-size:14px}
+    .panel{background:rgba(255,255,255,.78);border:1px solid var(--line);border-radius:18px;padding:22px;margin:16px 0}
+    .center{text-align:center}.muted{color:var(--muted)}.error{color:var(--danger);font-weight:700}.hidden{display:none!important}
+    .match-title{font-family:Georgia,serif;font-size:clamp(27px,4vw,40px);margin:6px 0}
+    .winner-grid{display:grid;grid-template-columns:1fr 1fr;gap:14px;margin:18px 0 6px}
+    .winner-btn{border:2px solid var(--navy);background:#fff;color:var(--navy);border-radius:14px;padding:18px;font-weight:800;font-size:18px}
+    .winner-btn.selected{border-color:var(--gold);background:var(--selected);box-shadow:inset 0 0 0 1px var(--gold)}
+    .form-grid{display:grid;grid-template-columns:1fr 1fr;gap:18px}
+    .field{margin:16px 0}
+    .field.full{grid-column:1/-1}
+    label{display:block;font-weight:750;margin-bottom:7px}
+    input,select,textarea{width:100%;border:1px solid var(--line);border-radius:12px;background:#fff;padding:12px;color:var(--ink)}
+    textarea{min-height:120px;resize:vertical}
+    .helper{font-size:12px;color:var(--muted);margin-top:6px}
+    .count{text-align:right}
+    .submit{display:block;margin:20px auto 0;border:none;border-radius:12px;padding:13px 28px;background:var(--navy);color:#fff;font-weight:800}
+    .submit:disabled{background:#d8d4ca;color:#888;cursor:not-allowed}
+    .status{min-height:22px;color:var(--muted);font-size:13px;margin-top:12px}
+    .readonly-grid{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-top:16px}
+    .readonly-item{background:#fff;border:1px solid var(--line);border-radius:12px;padding:14px}
+    .readonly-item.full{grid-column:1/-1}
+    .readonly-item strong{display:block;color:var(--navy);margin-bottom:4px}
+    dialog{width:min(560px,calc(100% - 28px));border:none;border-radius:18px;padding:0;box-shadow:0 25px 70px rgba(0,0,0,.27)}
+    dialog::backdrop{background:rgba(20,24,29,.55)}
+    .modal{padding:26px}
+    .modal h2{margin:0 0 10px;font-family:Georgia,serif;color:var(--navy)}
+    .warning{border-left:4px solid var(--danger);background:#fff4f2;padding:12px 14px;border-radius:8px;margin:16px 0;color:#6f211c}
+    .summary{background:#f6f1e7;border:1px solid var(--line);border-radius:12px;padding:14px;display:grid;gap:7px}
+    .modal-actions{display:flex;justify-content:flex-end;gap:10px;margin-top:20px}
+    .secondary{border:1px solid var(--line);background:#fff;border-radius:11px;padding:11px 16px;font-weight:700}
+    .danger-submit{border:none;background:var(--navy);color:#fff;border-radius:11px;padding:11px 16px;font-weight:800}
+    @media(max-width:820px){
+      .shell{grid-template-columns:1fr}.poster{position:relative;height:220px}.poster img{object-position:center 28%}.main{padding-top:22px}
+      .winner-grid,.form-grid,.readonly-grid{grid-template-columns:1fr}.field.full,.readonly-item.full{grid-column:auto}
+    }
+  </style>
+</head>
+<body>
+<div class="shell">
+  <aside class="poster"><img src="assets/poster2.png" alt="Happy Farmers 2v2 tournament poster"></aside>
+  <main class="main">
+    <header class="brand">
+      <div class="brand-mark">VI</div>
+      <div><h1>Happy Farmers 2v2 Tournaments</h1><p>Match Result Report</p></div>
+    </header>
+
+    <section id="loading" class="panel center"><h2>Loading Match…</h2><p class="muted">Reading result status.</p></section>
+
+    <section id="reportPage" class="hidden">
+      <div class="panel center">
+        <div class="muted" id="roundText"></div>
+        <h2 class="match-title" id="matchText"></h2>
+        <p>Only one person needs to submit this report. Submit only after both teams agree on the result.</p>
+      </div>
+
+      <div class="panel">
+        <h3 class="center">Who won this game?</h3>
+        <div class="winner-grid">
+          <button class="winner-btn" id="winnerA"></button>
+          <button class="winner-btn" id="winnerB"></button>
+        </div>
+
+        <div class="form-grid">
+          <div class="field">
+            <label for="endTurn">End Turn</label>
+            <input id="endTurn" type="number" min="15" max="135" step="1" placeholder="15–135">
+            <div class="helper">Whole number only. Allowed range: 15–135.</div>
+          </div>
+
+          <div class="field">
+            <label for="resultType">Result / Victory Type</label>
+            <select id="resultType"><option value="">Choose one…</option></select>
+          </div>
+
+          <div class="field full">
+            <label for="specialRules">Special Rules / Notes</label>
+            <textarea id="specialRules" maxlength="300" placeholder="Optional. Chinese and English are both supported. / 可选，中英文均可。"></textarea>
+            <div class="helper count"><span id="charCount">0</span>/300</div>
+          </div>
+        </div>
+
+        <button class="submit" id="reviewButton" disabled>Confirm Result</button>
+        <div class="status center" id="formStatus"></div>
+      </div>
+    </section>
+
+    <section id="submittedPage" class="hidden">
+      <div class="panel center">
+        <h2 class="match-title">Result already submitted.</h2>
+        <p class="muted">This result is locked and can only be reset by tournament staff.</p>
+      </div>
+      <div class="panel">
+        <div class="readonly-grid">
+          <div class="readonly-item"><strong>Match</strong><span id="roMatch"></span></div>
+          <div class="readonly-item"><strong>Winner</strong><span id="roWinner"></span></div>
+          <div class="readonly-item"><strong>End Turn</strong><span id="roTurn"></span></div>
+          <div class="readonly-item"><strong>Result / Victory Type</strong><span id="roType"></span></div>
+          <div class="readonly-item full"><strong>Special Rules / Notes</strong><span id="roNotes"></span></div>
+        </div>
+      </div>
+    </section>
+  </main>
+</div>
+
+<dialog id="confirmDialog">
+  <div class="modal">
+    <h2>Confirm Match Result</h2>
+    <div class="summary">
+      <div><strong>Winner:</strong> <span id="sumWinner"></span></div>
+      <div><strong>End Turn:</strong> <span id="sumTurn"></span></div>
+      <div><strong>Result / Victory Type:</strong> <span id="sumType"></span></div>
+      <div><strong>Special Rules / Notes:</strong> <span id="sumNotes"></span></div>
+    </div>
+
+    <div class="warning">
+      <strong>This result cannot be changed by players after submission.</strong><br>
+      If there is any dispute, uncertainty, or problem with the match, do not submit the result. Contact tournament staff instead.
+    </div>
+
+    <div class="modal-actions">
+      <button class="secondary" id="backButton">Back</button>
+      <button class="danger-submit" id="finalSubmitButton">Submit Final Result</button>
+    </div>
+  </div>
+</dialog>
+
+<script>
+  const API_URL = "https://script.google.com/macros/s/AKfycbwWyPF6j9cbWmQTNjIo2ZQp471le5frDWEKyTsaYGxz2S0jTTpwgbQ-y8HIVH5VBosz/exec";
+  const MATCH_ID = new URLSearchParams(location.search).get("match") || "";
+
+  let state = null;
+  let winnerTeamId = "";
+  let requestBusy = false;
+
+  const $ = id => document.getElementById(id);
+
+  function apiReady(){
+    return API_URL.startsWith("https://script.google.com/") && !API_URL.includes("PASTE_YOUR_");
+  }
+
+  function show(id){
+    ["loading","reportPage","submittedPage"].forEach(x => $(x).classList.toggle("hidden",x !== id));
+  }
+
+  function escapeHtml(s){
+    return String(s ?? "").replace(/[&<>"]/g,c => ({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c]));
+  }
+
+  function setStatus(msg,error=false){
+    $("formStatus").textContent = msg || "";
+    $("formStatus").className = "status center" + (error ? " error" : "");
+  }
+
+  async function loadState(){
+    if(!MATCH_ID){
+      $("loading").innerHTML = '<h2>Missing match link</h2><p class="error">This URL needs ?match=round01_01</p>';
+      return;
+    }
+    if(!apiReady()){
+      $("loading").innerHTML = '<h2>Backend not connected</h2><p class="error">Add the Apps Script /exec URL to result.html first.</p>';
+      return;
+    }
+
+    try{
+      const u = new URL(API_URL);
+      u.searchParams.set("action","resultState");
+      u.searchParams.set("match",MATCH_ID);
+      u.searchParams.set("_",Date.now());
+      const res = await fetch(u,{cache:"no-store",redirect:"follow"});
+      const data = await res.json();
+      if(data.status !== "success") throw new Error(data.message || "Could not load result page.");
+      state = data;
+      render();
+    }catch(err){
+      $("loading").innerHTML = `<h2>Could not load match</h2><p class="error">${escapeHtml(err.message)}</p>`;
+    }
+  }
+
+  function render(){
+    if(state.submitted){
+      renderSubmitted();
+      return;
+    }
+
+    show("reportPage");
+    const m = state.match;
+    $("roundText").textContent = m.round;
+    $("matchText").textContent = `${m.team_a_name} vs ${m.team_b_name}`;
+
+    $("winnerA").textContent = m.team_a_name;
+    $("winnerB").textContent = m.team_b_name;
+    $("winnerA").classList.toggle("selected",winnerTeamId === m.team_a);
+    $("winnerB").classList.toggle("selected",winnerTeamId === m.team_b);
+
+    const select = $("resultType");
+    if(select.options.length <= 1){
+      state.result_types.forEach(x => {
+        const o = document.createElement("option");
+        o.value = x;
+        o.textContent = x;
+        select.appendChild(o);
+      });
+    }
+
+    validate();
+  }
+
+  function renderSubmitted(){
+    show("submittedPage");
+    const m = state.match;
+    const r = state.result;
+    $("roMatch").textContent = `${m.match_id} · ${m.team_a_name} vs ${m.team_b_name}`;
+    $("roWinner").textContent = r.winner_name;
+    $("roTurn").textContent = r.end_turn;
+    $("roType").textContent = r.result_type;
+    $("roNotes").textContent = r.special_rules || "None";
+  }
+
+  function chooseWinner(id){
+    winnerTeamId = id;
+    render();
+  }
+
+  function validate(){
+    const turn = Number($("endTurn").value);
+    const turnOk = Number.isInteger(turn) && turn >= 15 && turn <= 135;
+    const typeOk = Boolean($("resultType").value);
+    const notesOk = $("specialRules").value.length <= 300;
+    $("reviewButton").disabled = requestBusy || !winnerTeamId || !turnOk || !typeOk || !notesOk;
+  }
+
+  function openReview(){
+    if($("reviewButton").disabled) return;
+
+    const m = state.match;
+    const winnerName = winnerTeamId === m.team_a ? m.team_a_name : m.team_b_name;
+    $("sumWinner").textContent = winnerName;
+    $("sumTurn").textContent = $("endTurn").value;
+    $("sumType").textContent = $("resultType").value;
+    $("sumNotes").textContent = $("specialRules").value.trim() || "None";
+    $("confirmDialog").showModal();
+  }
+
+  async function submitFinal(){
+    if(requestBusy) return;
+
+    requestBusy = true;
+    $("finalSubmitButton").disabled = true;
+    $("backButton").disabled = true;
+
+    try{
+      const res = await fetch(API_URL,{
+        method:"POST",
+        redirect:"follow",
+        headers:{"Content-Type":"text/plain;charset=utf-8"},
+        body:JSON.stringify({
+          action:"submitResult",
+          match:MATCH_ID,
+          winnerTeamId,
+          endTurn:Number($("endTurn").value),
+          resultType:$("resultType").value,
+          specialRules:$("specialRules").value.trim()
+        })
+      });
+
+      const data = await res.json();
+      if(data.status !== "success") throw new Error(data.message || "Submission failed.");
+
+      state = data;
+      $("confirmDialog").close();
+      render();
+    }catch(err){
+      $("confirmDialog").close();
+      setStatus(err.message,true);
+      await loadState();
+    }finally{
+      requestBusy = false;
+      $("finalSubmitButton").disabled = false;
+      $("backButton").disabled = false;
+      validate();
+    }
+  }
+
+  $("winnerA").addEventListener("click",() => chooseWinner(state.match.team_a));
+  $("winnerB").addEventListener("click",() => chooseWinner(state.match.team_b));
+  $("endTurn").addEventListener("input",validate);
+  $("resultType").addEventListener("change",validate);
+  $("specialRules").addEventListener("input",() => {
+    $("charCount").textContent = $("specialRules").value.length;
+    validate();
+  });
+  $("reviewButton").addEventListener("click",openReview);
+  $("backButton").addEventListener("click",() => $("confirmDialog").close());
+  $("finalSubmitButton").addEventListener("click",submitFinal);
+  $("confirmDialog").addEventListener("cancel",e => {
+    e.preventDefault();
+    $("confirmDialog").close();
+  });
+
+  loadState();
+</script>
+</body>
+</html>
