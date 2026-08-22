@@ -231,13 +231,25 @@
     const m = state.match;
 
     if(state.locked && !completedInThisSession){
-      stopPolling();
-      showPage("lockedPage");
-      $("lockedMatch").textContent = `${m.match_id} · ${m.team_a_name} vs ${m.team_b_name}`;
-      return;
-    }
 
-    if(!selectedTeam){
+  // A NEW visitor after Ban/Pick has finished:
+  // show the locked page.
+  if(!selectedTeam){
+    stopPolling();
+    showPage("lockedPage");
+    $("lockedMatch").textContent =
+      `${m.match_id} · ${m.team_a_name} vs ${m.team_b_name}`;
+    return;
+  }
+
+  // A player who was already inside this Ban/Pick room:
+  // show the same final result as the player who finished it.
+  completedInThisSession = true;
+  renderFinal();
+  return;
+}
+
+if(!selectedTeam){     
       showPage("entry");
       $("entryRound").textContent = m.round;
       $("entryMatchId").textContent = m.match_id;
